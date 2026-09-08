@@ -3,12 +3,12 @@ import { SONGS } from '../lib/songs'
 
 // The memory-card readout that fills as the order is built.
 export default function MemoryCard({ order }: { order: SongId[] }) {
-  const rows = Array.from({ length: 7 }, (_, i) => order[i])
+  const rows = Array.from({ length: 6 }, (_, i) => order[i])
   return (
     <div className="mc">
       <div className="mc-h mono">
         <span>{'\u25fc'} save data {'\u00b7'} davvn.exe</span>
-        <span>{String(order.length).padStart(2, '0')}/07 blocks</span>
+        <span>{String(order.length).padStart(2, '0')}/06 blocks</span>
       </div>
       <div className="mc-blocks">
         {rows.map((id, i) => (

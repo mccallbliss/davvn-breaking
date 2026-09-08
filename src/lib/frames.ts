@@ -10,10 +10,6 @@ export const FRAME: Record<TrackId, { lab: string; sub: string }> = {
     lab: 'Sink into the fog of another identical day',
     sub: "wishing this life were a dream you'd wake from",
   },
-  unravel: {
-    lab: 'Fall into the one who stays',
-    sub: 'let your life tangle all the way into theirs',
-  },
   tryworst: {
     lab: 'Cut off the friend feeding your doubt',
     sub: "call out who's been climbing on your back",
@@ -46,7 +42,6 @@ export const WOUNDS: Record<'dissolve' | 'outside', { kicker: string; lab: strin
 export const FIRST_NOTE: Record<TrackId, string> = {
   dissolve: 'You turned back toward the lost friend before anything else.',
   outside: 'You let yourself sink into the fog before facing anything.',
-  unravel: 'You reached for love first \u2014 connection before reckoning.',
   tryworst: 'You led with a clean break \u2014 anger before grief.',
   wanting: 'You led with hunger \u2014 already onto the next thing.',
   blurry: 'You led with doubt \u2014 questioning before feeling.',

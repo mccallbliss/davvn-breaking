@@ -250,4 +250,18 @@ h1.serif{font-weight:600;font-size:clamp(28px,5vw,40px);color:#eef7fa;margin:0 0
   .crt-scan{opacity:.24;}
   .choice{font-size:19px;}
 }
+/* ---- the read (ending payoff) ---- */
+.vsub{font-family:var(--mono);font-size:15px;letter-spacing:.5px;color:#d69a63;text-transform:lowercase;margin-top:5px;}
+.readblk{margin-top:16px;border-top:1px dashed var(--edge);padding-top:14px;}
+.readblk .rlab{font-family:var(--mono);font-size:14px;letter-spacing:2px;text-transform:uppercase;color:var(--phos-dim);margin-bottom:9px;}
+.rmeters{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;font-family:var(--mono);font-size:14px;color:var(--phos-dim);max-width:380px;}
+.rmeter{display:flex;align-items:center;gap:8px;}
+.rmeter span{width:54px;flex:none;}
+.rmeter span:last-child{text-align:right;}
+.rbar{flex:1;height:5px;background:rgba(150,200,215,.16);border:1px solid var(--edge);position:relative;}
+.rbar i{position:absolute;top:-2px;width:6px;height:9px;background:var(--phos);box-shadow:0 0 7px rgba(160,220,240,.7);transform:translateX(-50%);transition:left .6s ease;}
+.rbar.warm i{background:#d69a63;box-shadow:0 0 7px rgba(214,154,99,.7);}
+.rline{font-style:italic;font-size:14.5px;color:var(--phos-dim);margin-bottom:10px;line-height:1.45;}
+.rcoda{font-family:var(--serif);font-size:clamp(17px,2.3vw,21px);line-height:1.4;color:#eef7fa;}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}

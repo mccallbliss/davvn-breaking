@@ -26,15 +26,7 @@ export const ARCH: Record<TrackId, Arch> = {
     tag: 'the wanting was the whole point.',
     c: '#5f5170',
     p: 'You romanticize the reach far more than the grip. Nothing arrives quite like you pictured \u2014 and somewhere along the way you made peace with the ache instead of the answer.',
-    trig: 'found wanting',
-  },
-  unravel: {
-    k: 'Ending',
-    n: 'THE TETHER',
-    tag: 'it always comes back to a person.',
-    c: '#7a4954',
-    p: "Your compass points at someone else. Devotion or dependence \u2014 you can't always tell \u2014 but you lead with the heart and let your life tangle all the way in.",
-    trig: 'unravel',
+    trig: 'want',
   },
   tryworst: {
     k: 'Ending',
@@ -58,7 +50,7 @@ export const ARCH: Record<TrackId, Arch> = {
     tag: 'never fully woke up.',
     c: '#465561',
     p: "You live half inside the life you'd rather have. Dreamy, dissociative, romantic about the exit you keep almost taking but never do.",
-    trig: 'outside (flatline)',
+    trig: 'flatline',
   },
 }
 
@@ -71,12 +63,13 @@ export const GLITCH: Arch = {
   trig: 'a secret you won\u2019t be told',
 }
 
+// closer is the last track; the glitch needs both wounds at slots 1 & 3, closing on want
 export function isGlitch(order: SongId[]): boolean {
-  return OPENERS.includes(order[2]) && order[6] === 'wanting'
+  return OPENERS.includes(order[2]) && order[order.length - 1] === 'wanting'
 }
 
 export function archOf(order: SongId[]): Arch {
-  return isGlitch(order) ? GLITCH : ARCH[order[6] as TrackId]
+  return isGlitch(order) ? GLITCH : ARCH[order[order.length - 1] as TrackId]
 }
 
 export const FATES: Arch[] = Object.values(ARCH)

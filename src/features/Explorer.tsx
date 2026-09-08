@@ -72,7 +72,7 @@ export default function Explorer({ builder }: { builder: EpBuilder }) {
 
       {b.phase === 'wound' && (
         <div className="screen">
-          <div className="readout">block 01 / 07 {'\u00b7'} the wound</div>
+          <div className="readout">block 01 / 06 {'\u00b7'} the wound</div>
           <div className="wq">What breaks you first?</div>
           <div className="choices">
             {(Object.keys(WOUNDS) as Array<'dissolve' | 'outside'>).map((id, i) => (
@@ -97,7 +97,7 @@ export default function Explorer({ builder }: { builder: EpBuilder }) {
       {b.phase === 'build' && (
         <div className="screen">
           <div className="readout">
-            block {String(b.order.length + 1).padStart(2, '0')} / 07 {'\u00b7'} what happens next?
+            block {String(b.order.length + 1).padStart(2, '0')} / 06 {'\u00b7'} what happens next?
           </div>
           {b.order.length === 2 && (
             <p className="note">
@@ -146,7 +146,7 @@ export default function Explorer({ builder }: { builder: EpBuilder }) {
           <div className="kick">load game</div>
           <h1 className="serif">Every way the record can end</h1>
           <p className="lede">
-            Six endings, set by the track you close on. A seventh only surfaces if you stop playing
+            Five endings, set by the track you close on. A sixth only surfaces if you stop playing
             by the rules — and it doesn't save clean.
           </p>
           <div className="slots">
@@ -205,14 +205,14 @@ function Decode({ onLoad, onHome }: { onLoad: (o: SongId[]) => void; onHome: () 
       <div className="kick">load save code</div>
       <h1 className="serif">Load someone else's save</h1>
       <p className="lede">
-        Enter a davvn save code (like <b>DVN{'\u00b7'}DLTUWOB</b>) to play their exact running order
+        Enter a davvn save code (like <b>DVN{'\u00b7'}TDLFWB</b>) to play their exact running order
         and see the ending it reaches.
       </p>
       <input
         className="codein mono"
         value={val}
         maxLength={16}
-        placeholder={'DVN\u00b7________'}
+        placeholder={'DVN\u00b7______'}
         onChange={(e) => setVal(e.target.value)}
       />
       <div className="prompt">
