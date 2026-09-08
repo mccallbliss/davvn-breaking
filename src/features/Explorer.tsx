@@ -7,12 +7,11 @@ import { FATES } from '../lib/archetypes'
 import { parseCode, shareUrl, codeOf } from '../lib/cutcode'
 import { BASE_URL } from '../lib/config'
 import type { EpBuilder } from '../lib/useEpBuilder'
-import Shell from '../components/Shell'
 import MemoryCard from '../components/MemoryCard'
 import SaveFile from '../components/SaveFile'
 import ShareCard from '../components/ShareCard'
 
-const GLYPHS = ['✕', '○', '△', '□', '◇', '◦']
+const GLYPHS = ['\u2715', '\u25cb', '\u25b3', '\u25a1', '\u25c7', '\u25e6']
 
 export default function Explorer({ builder }: { builder: EpBuilder }) {
   const b = builder
@@ -43,151 +42,150 @@ export default function Explorer({ builder }: { builder: EpBuilder }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [b.phase, b.order])
 
-  const scrollToGame = () =>
-    document.getElementById('game')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  const startWound = () => {
-    b.startWound()
-    scrollToGame()
-  }
+  // each phase is its own full-viewport screen — start at the top on change
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [b.phase])
 
   return (
-    <div id="game" className="gamewrap">
-      <Shell>
-        {b.phase === 'intro' && (
-          <>
-            <div className="kick mono">choose your own adventure · interactive EP</div>
-            <h1 className="serif">Which davvn are you?</h1>
-            <p className="lede">
-              Seven songs, one EP — but <b>you</b> sequence the order they hit in, one decision at a
-              time. Where you choose to end reveals your ending. Build it, keep the save, share your
-              cut.
-            </p>
-            <div className="btnrow">
-              <button className="btn primary" onClick={startWound}>▶ New game</button>
-              <button className="btn" onClick={() => b.goto('gallery')}>Load game</button>
-              <button className="btn" onClick={() => b.goto('decode')}>Enter save code</button>
-            </div>
-          </>
-        )}
+    <>
+      {b.phase === 'intro' && (
+        <div className="screen">
+          <div className="readout">
+            memory card (8mb) {'\u00b7'} loading save data <span className="blink">{'\u2588'}</span>
+          </div>
+          <div className="intro-body">
+            <div className="wordmark">davvn</div>
+            <div className="kicker">a record you have to walk through to hear.</div>
+            <nav className="menu">
+              <button className="mi" onClick={b.startWound}>New game</button>
+              <button className="mi" onClick={() => b.goto('gallery')}>Load game</button>
+              <button className="mi" onClick={() => b.goto('decode')}>Enter save code</button>
+            </nav>
+          </div>
+          <div className="prompt">
+            <span><b>{'\u2715'}</b> select</span>
+            <span className="spacer">out october 2026</span>
+          </div>
+        </div>
+      )}
 
-        {b.phase === 'wound' && (
-          <>
-            <div className="prog mono">block 01 / 07 · the wound</div>
-            <h1 className="serif">What breaks you first?</h1>
-            <div className="menu">
-              {(Object.keys(WOUNDS) as Array<'dissolve' | 'outside'>).map((id, i) => (
-                <button key={id} className="mi" onClick={() => b.pickWound(id)}>
-                  <span className="btn-glyph">{GLYPHS[i]}</span>
-                  <span>
-                    <span className="klow">{WOUNDS[id].kicker}</span>
-                    <div className="mt">{WOUNDS[id].lab}</div>
-                    <div className="ms">{WOUNDS[id].sub}</div>
-                    <div className="mp">writes <b>{SONGS[id].title}</b></div>
+      {b.phase === 'wound' && (
+        <div className="screen">
+          <div className="readout">block 01 / 07 {'\u00b7'} the wound</div>
+          <div className="wq">What breaks you first?</div>
+          <div className="choices">
+            {(Object.keys(WOUNDS) as Array<'dissolve' | 'outside'>).map((id, i) => (
+              <button key={id} className="choice" onClick={() => b.pickWound(id)}>
+                <span className="k">{i === 0 ? '\u2715' : '\u25cb'}</span>
+                <span className="ch-lab">
+                  <span className="ch-eyebrow">{WOUNDS[id].kicker}</span>
+                  {WOUNDS[id].lab}
+                  <span className="ch-sub">
+                    {WOUNDS[id].sub} {'\u00b7'} writes &ldquo;{SONGS[id].title}&rdquo;
                   </span>
-                </button>
-              ))}
-            </div>
-            <MemoryCard order={b.order} />
-            <div className="hints mono">
-              <span><b>✕</b> select</span>
-              <span><b>○</b> <a className="lk" onClick={() => b.goto('intro')}>back</a></span>
-            </div>
-          </>
-        )}
+                </span>
+              </button>
+            ))}
+          </div>
+          <div className="prompt">
+            <span><b>{'\u25cb'}</b> <a onClick={() => b.goto('intro')}>back</a></span>
+          </div>
+        </div>
+      )}
 
-        {b.phase === 'build' && (
-          <>
-            <div className="prog mono">
-              block {String(b.order.length + 1).padStart(2, '0')} / 07 · what happens next?
-            </div>
-            {b.order.length === 2 && (
-              <p className="lede">
-                <b>life less</b> locks in as track 2 — the grind under both wounds. No one skips it.
-                Now sequence what's left.
-              </p>
-            )}
-            <div className="menu">
-              {b.pool.map((id, i) => (
-                <button key={id} className="mi" onClick={() => b.pick(id)}>
-                  <span className="btn-glyph">{GLYPHS[i] || '◦'}</span>
-                  <span>
-                    <div className="mt">{FRAME[id as keyof typeof FRAME].lab}</div>
-                    <div className="ms">{FRAME[id as keyof typeof FRAME].sub}</div>
-                    <div className="mp">writes <b>{SONGS[id].title}</b></div>
-                  </span>
-                </button>
-              ))}
-            </div>
-            <MemoryCard order={b.order} />
-            <div className="hints mono">
-              <span><b>✕</b> select</span>
-              <span><b>△</b> <a className="lk" onClick={b.undo}>step back</a></span>
-              <span><b>○</b> <a className="lk" onClick={startWound}>restart</a></span>
-            </div>
-          </>
-        )}
-
-        {b.phase === 'done' && (
-          <>
-            <SaveFile
-              order={b.order}
-              shareLink={shareUrl(b.order, BASE_URL)}
-              onExport={() => setCardOpen(true)}
-            />
-            <div className="btnrow">
-              <button className="btn" onClick={() => b.goto('gallery')}>Load game</button>
-              <button className="btn" onClick={b.undo}>△ Step back</button>
-              <button className="btn" onClick={startWound}>▶ New game</button>
-            </div>
-          </>
-        )}
-
-        {b.phase === 'gallery' && (
-          <>
-            <div className="kick mono">load game</div>
-            <h1 className="serif">Every way the record can end</h1>
-            <p className="lede">
-              Six endings, set by the track you close on. A seventh only surfaces if you stop playing
-              by the rules — and it doesn't save clean.
+      {b.phase === 'build' && (
+        <div className="screen">
+          <div className="readout">
+            block {String(b.order.length + 1).padStart(2, '0')} / 07 {'\u00b7'} what happens next?
+          </div>
+          {b.order.length === 2 && (
+            <p className="note">
+              <b>life less</b> locks in as track 2 — the grind under both wounds. No one skips it.
+              Now sequence what's left.
             </p>
-            <div className="slots">
-              {FATES.map((a) => (
-                <div key={a.n} className="slot" onClick={startWound}>
-                  <div className="sth" style={{ background: `linear-gradient(155deg, ${a.c}, #0b1114)` }}>
-                    {a.n[4] || a.n[0]}
-                  </div>
-                  <div>
-                    <div className="sn serif">{a.n}</div>
-                    <div className="st serif">&ldquo;{a.tag}&rdquo;</div>
-                    <div className="se mono">ends on <b>{a.trig}</b></div>
-                  </div>
+          )}
+          <div className="choices">
+            {b.pool.map((id, i) => (
+              <button key={id} className="choice" onClick={() => b.pick(id)}>
+                <span className="k">{GLYPHS[i] || '\u25e6'}</span>
+                <span className="ch-lab">
+                  {FRAME[id as keyof typeof FRAME].lab}
+                  <span className="ch-sub">
+                    {FRAME[id as keyof typeof FRAME].sub} {'\u00b7'} writes &ldquo;{SONGS[id].title}&rdquo;
+                  </span>
+                </span>
+              </button>
+            ))}
+          </div>
+          <MemoryCard order={b.order} />
+          <div className="prompt">
+            <span><b>{'\u25b3'}</b> <a onClick={b.undo}>step back</a></span>
+            <span><b>{'\u25cb'}</b> <a onClick={b.startWound}>restart</a></span>
+          </div>
+        </div>
+      )}
+
+      {b.phase === 'done' && (
+        <div className="screen">
+          <SaveFile
+            order={b.order}
+            shareLink={shareUrl(b.order, BASE_URL)}
+            onExport={() => setCardOpen(true)}
+          />
+          <div className="prompt">
+            <span><b>{'\u25b3'}</b> <a onClick={b.undo}>step back</a></span>
+            <span><a onClick={() => b.goto('gallery')}>load game</a></span>
+            <span className="spacer"><a onClick={b.startWound}>{'\u25b6'} new game</a></span>
+          </div>
+        </div>
+      )}
+
+      {b.phase === 'gallery' && (
+        <div className="screen">
+          <div className="kick">load game</div>
+          <h1 className="serif">Every way the record can end</h1>
+          <p className="lede">
+            Six endings, set by the track you close on. A seventh only surfaces if you stop playing
+            by the rules — and it doesn't save clean.
+          </p>
+          <div className="slots">
+            {FATES.map((a) => (
+              <div key={a.n} className="slot" onClick={b.startWound}>
+                <div className="sth" style={{ background: `linear-gradient(155deg, ${a.c}, #0b1114)` }}>
+                  {a.n[4] || a.n[0]}
                 </div>
-              ))}
-              <div className="slot corr" onClick={startWound}>
-                <div className="sth">▚</div>
                 <div>
-                  <div className="sn serif">?????</div>
-                  <div className="st serif">corrupted data</div>
-                  <div className="se mono">recovery: <b>unknown</b></div>
+                  <div className="sn serif">{a.n}</div>
+                  <div className="st serif">&ldquo;{a.tag}&rdquo;</div>
+                  <div className="se mono">ends on <b>{a.trig}</b></div>
                 </div>
               </div>
+            ))}
+            <div className="slot corr" onClick={b.startWound}>
+              <div className="sth">{'\u258a'}</div>
+              <div>
+                <div className="sn serif">?????</div>
+                <div className="st serif">corrupted data</div>
+                <div className="se mono">recovery: <b>unknown</b></div>
+              </div>
             </div>
-            <div className="btnrow">
-              <button className="btn primary" onClick={startWound}>▶ New game</button>
-              <button className="btn" onClick={() => b.goto('intro')}>← home</button>
-            </div>
-          </>
-        )}
+          </div>
+          <div className="prompt">
+            <span><b>{'\u2715'}</b> <a onClick={b.startWound}>new game</a></span>
+            <span><a onClick={() => b.goto('intro')}>{'\u2190'} home</a></span>
+          </div>
+        </div>
+      )}
 
-        {b.phase === 'decode' && (
-          <Decode onLoad={(o) => b.loadOrder(o)} onHome={() => b.goto('intro')} />
-        )}
-      </Shell>
+      {b.phase === 'decode' && (
+        <Decode onLoad={(o) => b.loadOrder(o)} onHome={() => b.goto('intro')} />
+      )}
 
       {cardOpen && b.phase === 'done' && (
         <ShareCard order={b.order} onClose={() => setCardOpen(false)} />
       )}
-    </div>
+    </>
   )
 }
 
@@ -203,29 +201,25 @@ function Decode({ onLoad, onHome }: { onLoad: (o: SongId[]) => void; onHome: () 
     onLoad(o)
   }
   return (
-    <>
-      <div className="kick mono">load save code</div>
+    <div className="screen">
+      <div className="kick">load save code</div>
       <h1 className="serif">Load someone else's save</h1>
       <p className="lede">
-        Enter a davvn save code (like <b>DVN·DLTUWOB</b>) to play their exact running order and see
-        the ending it reaches.
+        Enter a davvn save code (like <b>DVN{'\u00b7'}DLTUWOB</b>) to play their exact running order
+        and see the ending it reaches.
       </p>
       <input
         className="codein mono"
         value={val}
         maxLength={16}
-        placeholder="DVN·________"
+        placeholder={'DVN\u00b7________'}
         onChange={(e) => setVal(e.target.value)}
       />
-      <div className="btnrow">
-        <button className="btn primary" onClick={submit}>▶ Load</button>
-        <button className="btn" onClick={onHome}>← home</button>
+      <div className="prompt">
+        <span><b>{'\u2715'}</b> <a onClick={submit}>load</a></span>
+        <span><a onClick={onHome}>{'\u2190'} home</a></span>
       </div>
-      {err && (
-        <p className="lede" style={{ color: '#d98a84', marginTop: 12 }}>
-          {err}
-        </p>
-      )}
-    </>
+      {err && <p className="lede" style={{ color: '#d98a84', marginTop: 12 }}>{err}</p>}
+    </div>
   )
 }
